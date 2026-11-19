@@ -20,7 +20,7 @@ for (const f of readdirSync("scenarios").filter((f) => f.endsWith(".enc")).sort(
   mkdirSync(SCENARIO_DIR, { recursive: true });
   writeFileSync(SCENARIO_FILE, JSON.stringify(scenario, null, 2));
   rmSync("data", { recursive: true, force: true });
-  console.log(`Opened "${scenario.title}". The database was reset; \`npm run dev\` starts a fresh run.`);
+  console.log(`Opened "${scenario.title}". The database was reset. (Re)start \`npm run dev\` to begin a fresh run.`);
   process.exit(0);
 }
 console.error("That code doesn't open any scenario in scenarios/. Check the words and try again.");

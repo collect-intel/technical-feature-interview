@@ -1,11 +1,14 @@
-import { useApi } from "../api.ts";
-import { Link } from "../router.tsx";
+"use client";
+import Link from "next/link";
+import { useParams } from "next/navigation";
+import { useApi } from "../../_components/api.ts";
 
 type Verdict = { criterion_id: string; judge_id: string; verdict: "met" | "unmet" | null; raw: string | null };
 type Cell = { id: string; target_id: string; item_id: string; status: string; attempts: number; error_class: string | null; response: string | null; verdicts: Verdict[] };
 type Run = { id: string; status: string; cells: { status: string; n: number }[]; calls: { kind: string; status: string; n: number; cost_usd: number }[] };
 
-export function RunDetail({ id }: { id: string }) {
+export default function RunDetailPage() {
+  const { id } = useParams<{ id: string }>();
   const run = useApi<Run>(`/api/runs/${id}`, 1500);
   const cells = useApi<Cell[]>(`/api/runs/${id}/cells`, 1500);
   if (run.error) return <p className="error">{run.error}</p>;
@@ -18,8 +21,8 @@ export function RunDetail({ id }: { id: string }) {
         {run.data.id} <span className={`status ${run.data.status}`}>{run.data.status}</span>
       </h1>
       <p className="tabs">
-        <Link to={`/runs/${id}/panel`}>Panel</Link>
-        <Link to={`/runs/${id}/diversity`}>Diversity</Link>
+        <Link href={`/runs/${id}/panel`}>Panel</Link>
+        <Link href={`/runs/${id}/diversity`}>Diversity</Link>
       </p>
       <p className="muted">
         Cells: {run.data.cells.map((c) => `${c.n} ${c.status}`).join(" · ")} · failed attempts retried: {retries} · cost ${cost.toFixed(4)}

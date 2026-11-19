@@ -3,7 +3,15 @@
 
 import { mkdirSync } from "node:fs";
 import { dirname } from "node:path";
-import { DatabaseSync } from "node:sqlite";
+// node:sqlite works but still prints an "experimental" warning; hide just that one.
+const emitWarning = process.emitWarning;
+process.emitWarning = ((warning: string | Error, ...rest: unknown[]) => {
+  if (String(warning).includes("SQLite is an experimental feature")) return;
+  return (emitWarning as (...a: unknown[]) => void).call(process, warning, ...rest);
+}) as typeof process.emitWarning;
+
+// Loaded through getBuiltinModule so Next.js's bundler never tries to resolve node:sqlite.
+const { DatabaseSync } = process.getBuiltinModule("node:sqlite") as typeof import("node:sqlite");
 
 export const DB_PATH = process.env.DB_PATH ?? "data/app.db";
 
@@ -132,7 +140,7 @@ CREATE TABLE IF NOT EXISTS analyses (
 );
 `;
 
-export type DB = DatabaseSync;
+export type DB = import("node:sqlite").DatabaseSync;
 
 export function openDb(path = DB_PATH): DB {
   if (path !== ":memory:") mkdirSync(dirname(path), { recursive: true });

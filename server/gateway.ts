@@ -7,7 +7,7 @@ import type { Scenario } from "../lib/scenario.ts";
 import { now, type DB } from "./db.ts";
 
 /** Read on every call, so tests (and you) can point the gateway elsewhere at runtime. */
-export const mockUrl = () => process.env.MOCK_URL ?? `http://localhost:${process.env.MOCK_PORT ?? 4010}`;
+export const mockUrl = () => process.env.MOCK_URL ?? `http://localhost:${process.env.PORT ?? 3000}/mock`;
 
 export type RetryPolicy = { maxAttempts: number; baseDelayMs: number; timeoutMs: number };
 export const DEFAULT_RETRY: RetryPolicy = { maxAttempts: 4, baseDelayMs: 200, timeoutMs: 5_000 };

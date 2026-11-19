@@ -23,7 +23,7 @@ Decisions for reviewers to weigh in on:
 2. **Candidates know problems are planted; they don't know which ones.** This document and the rubric say openly that the scenarios contain realistic problems and that finding them scores. Hiding that wouldn't survive one candidate's write-up, and stating it is fairer.
 3. **The mock server is a generic replayer.** It contains no trap logic. Planted problems exist only as data, generated in the sealed zone and shipped as encrypted scenarios (§4.3, §5).
 4. **Extract from Weval Studio rather than strip it.** We lift Studio's pure modules (blueprint schema, matchers, seeded PRNG) and rebuild a small runner modelled on its plan → cell → finish. Studio itself is never booted (§11).
-5. **Boots locally with no Docker, no API keys and no native builds:** Node with the built-in `node:sqlite` and `node:crypto`, Vite + React, and a local mock HTTP server (§4.1).
+5. **A plain Next.js app that boots with `npm install && npm run dev`:** no Docker, no API keys, no native builds. One server process holds the pages, the API, the job worker and the mock model gateway (served at `/mock`), with Node's built-in `node:sqlite` and `node:crypto`. The practice scenario loads itself on first boot (§4.1).
 6. **Papers plug in as "paper packs."** The app, runner, sealing, rubric and session format don't depend on the paper. Each paper adds one pack: a brief, a generator module, planted problems, reference and naive solutions, a known-answer test and scoring anchors. Four packs exist (Judge Panel Trust, Model Monoculture, Convention Lab, Agent Fidelity); a round activates any of them, one per candidate by seed (§6.5).
 7. **Candidate time is capped at about 3 hours**, and nothing a candidate builds is used in a product (§9).
 8. **Each planted problem is tested.** Before each round, an interviewer runs `npm run check:interviewer`, which proves the reference solution catches each problem and a naive solution falls for it (§12). The key never leaves the password manager: no CI secret.
@@ -66,13 +66,13 @@ flowchart LR
     end
     scen -- encrypt with round codes --> enc[scenarios/*.enc]
     subgraph open[Open zone · plain text]
-        code[code from interviewer] --> dec[npm run scenario] --> mock[mock replayer :4010]
+        code[code from interviewer] --> dec[npm run scenario] --> mock[mock gateway at /mock]
         enc --> dec
         runner[runner + job table] -- HTTP --> mock
         runner --> db[(SQLite)]
         db --> feature[candidate's feature]
         feature --> db
-        db --> api[API :3000] --> ui[web :5173]
+        db --> api[API routes /api] --> ui[pages]
     end
 ```
 
@@ -92,7 +92,8 @@ technical-feature-interview/
 ├── mock/                     generic scenario replayer
 ├── server/                   runner, jobs, API
 ├── analysis/                 language-neutral analysis contract + Python stub
-├── apps/web/                 Vite + React shell
+├── app/                      Next.js App Router: pages, /api route handlers, /mock gateway route
+├── instrumentation.ts        starts the job worker when the server boots
 ├── scenarios/                *.enc, this round's sessions
 ├── tests/                    given tests (pass) + known-answer tests (fail until built)
 ├── scripts/                  doctor · scenario · reset · seal · unseal
@@ -126,7 +127,7 @@ interviewer/
 
 | Requirement | How |
 |---|---|
-| One command | `npm install && npm run dev` starts the mock (:4010), API (:3000) and web (:5173) |
+| One command | `npm install && npm run dev` starts the Next.js app at :3000: pages, API, worker and mock gateway in one process. On first boot it opens the practice scenario |
 | No keys and no network after install | Every model, judge and embedding call goes to the local mock |
 | No Docker and no native builds | Node's built-in `node:sqlite` and `node:crypto`; dependencies are pure JS |
 | Mac, Linux and Windows | CI runs `doctor` and the tests on all three |
@@ -194,11 +195,13 @@ The feature's computation reads a run and writes one row to `analyses`. Candidat
 - `input_hash`: a hash of the rows used, so a changed run marks the analysis `stale`.
 - `status`: `partial` if the run wasn't complete.
 
-### 4.7 API and web shell
+### 4.7 API and pages
 
-Given endpoints: `GET /runs`, `GET /runs/:id`, `GET /runs/:id/cells`, `POST /runs`, `GET /jobs/:id`. Each brief's endpoint is the candidate's to design; the API shape is part of the design review.
+The app is Next.js (App Router). Given route handlers: `GET /api/runs`, `POST /api/runs`, `GET /api/runs/:id`, `GET /api/runs/:id/cells`, `GET /api/scenario`, `GET /api/study`, `GET /api/jobs/:id`. Each brief's endpoint, route handler or server action, is the candidate's to design; the API shape is part of the design review.
 
-The web shell provides routing, a table component, a chart library and one empty route per brief: `/runs/:id/panel`, `/runs/:id/diversity` and `/lab`.
+Given pages: the runs list and a run's detail. One empty page per brief: `/runs/:id/panel`, `/runs/:id/diversity`, `/lab` and `/agents`. `server/app.ts` holds the single app instance (database, scenario, gateway, worker) on `globalThis`, because Next.js can load server modules more than once; `instrumentation.ts` starts the worker at boot.
+
+Switching scenario (`npm run scenario -- <code>`) resets the database, so the dev server is restarted afterwards.
 
 ### 4.8 Tests
 
@@ -306,7 +309,7 @@ Everything except the paper-specific content is generic, so a new paper means a 
 |---|---|---|
 | Open | `briefs/<pack>.md` | The feature brief in the Linear house format |
 | Open | `tests/known-answer/<pack>.test.ts` | The known-answer test, failing until implemented |
-| Open | `apps/web` route stub | An empty page for the feature |
+| Open | an `app/` route stub | An empty page for the feature |
 | Open, only if needed | a schema migration and a mock endpoint kind | For data the existing shapes don't cover (below) |
 | Sealed | `interviewer/packs/<pack>/` | Problems, strengths, generator, reference, naive, anchors |
 | Sealed | `interviewer/wiki/<pack>.md` | The ingested paper (§6.4) |
@@ -435,6 +438,8 @@ Langfuse is MIT-licensed; keep its licence notice alongside anything lifted, and
 | Trap logic inside the mock server | No: readable source would reveal the problems. Replayer plus sealed generator keeps them as data |
 | Hosted scenario service | No: breaks "offline after install" and adds an outage risk during interviews |
 | Live model APIs | No: cost, fairness (candidates' keys and rate limits) and non-reproducible sessions |
+| Vite front end plus separate API and mock servers | Replaced: three processes and three ports to explain. One Next.js app is what candidates expect, and it matches Weval Studio's stack |
+| Create React App | No: deprecated by the React team, and front-end only |
 | Docker Compose | No: fails on locked-down laptops and adds minutes |
 | `better-sqlite3` | No: native build failures on Windows and fresh Macs; `node:sqlite` covers our needs |
 | Python throughout | Not by default, because we lift TypeScript from Studio. Python is allowed for the analysis stage; revisit under §14 |

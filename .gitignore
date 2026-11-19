@@ -5,4 +5,6 @@ interviewer/
 .interviewer-key
 *.db
 *.db-*
-apps/web/dist/
+.next/
+next-env.d.ts
+*.tsbuildinfo

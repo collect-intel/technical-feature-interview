@@ -7,7 +7,7 @@ import { mulberry32 } from "../../lib/prng/mulberry32.ts";
 import { chatKey, judgeKey, SCENARIO_VERSION, type Scenario } from "../../lib/scenario.ts";
 import { syntheticStudy } from "./study.ts";
 
-export const PRACTICE_CODE = "practice-meadow-lantern";
+export { PRACTICE_CODE } from "../../server/app.ts";
 
 export function practiceScenario(round = "practice", seed = 7): Scenario {
   const rand = mulberry32(hashSeed(`practice|${seed}`));

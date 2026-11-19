@@ -1,8 +1,13 @@
 {
   "compilerOptions": {
     "target": "ES2023",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "lib": [
+      "ES2023",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
     "erasableSyntaxOnly": true,
@@ -10,8 +15,40 @@
     "strict": true,
     "skipLibCheck": true,
     "jsx": "react-jsx",
-    "lib": ["ES2023", "DOM"],
-    "types": ["node"]
+    "incremental": true,
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "types": [
+      "node"
+    ],
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": [
+        "./*"
+      ]
+    },
+    "allowJs": true
   },
-  "include": ["lib", "mock", "server", "scripts", "tests", "apps/web/src"]
+  "include": [
+    "next-env.d.ts",
+    "app",
+    "lib",
+    "mock",
+    "server",
+    "scripts",
+    "tests",
+    "instrumentation.ts",
+    "next.config.ts",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "interviewer"
+  ]
 }

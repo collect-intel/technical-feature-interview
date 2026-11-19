@@ -5,7 +5,12 @@ export function NotBuilt({ brief, runId }: { brief: string; runId?: string }) {
       <h1>Not built yet</h1>
       <p>
         This page is the feature in <code>briefs/{brief}.md</code>
-        {runId ? <> for run <code>{runId}</code></> : null}.
+        {runId ? (
+          <>
+            {" "}for run <code>{runId}</code>
+          </>
+        ) : null}
+        .
       </p>
     </div>
   );

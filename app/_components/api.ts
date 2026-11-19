@@ -1,3 +1,4 @@
+"use client";
 import { useEffect, useState } from "react";
 
 /** Fetch JSON from the API; `refreshMs` polls while the component is mounted. */

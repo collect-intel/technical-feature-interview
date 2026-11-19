@@ -18,6 +18,7 @@ jobs:
       - run: npm run doctor
       - run: npm run test:given
       - run: npm run typecheck
+      - run: npm run build
       - name: No sealed material in plain text
         run: npm run check:canary
       - name: Known-answer tests fail until a feature is built
