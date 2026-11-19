@@ -1,4 +1,4 @@
-# TDD: Research-feature interview — one shareable repo
+# TDD: Technical feature interview — one shareable repo
 
 **Status:** Draft for review · rollout steps 2–3 built · **Author:** Ken Ojibe · **Date:** November 19, 2026 · **Reviewers:** [ ]
 
@@ -10,7 +10,7 @@
 
 A hiring loop for a mid-level engineer who turns a research paper into a working product feature. In a two-hour session, the candidate uses their own AI tools to read a paper, plan, and build one feature end to end in a small app that runs on their laptop. They are graded on research faithfulness, evaluation, system design, product judgment and how they use AI.
 
-**Everything lives in one repo** (`collect-intel/research-feature-interview`). You share that repo with candidates and colleagues alike. It has two zones:
+**Everything lives in one repo** (`collect-intel/technical-feature-interview`). You share that repo with candidates and colleagues alike. It has two zones:
 
 - **Open zone (plain text):** the app, the runner, the mock services, the feature briefs, the tests, this TDD and the scoring rubric. This is what candidates work in.
 - **Sealed zone (`interviewer.sealed`, encrypted):** the scenario generator, the catalogue of planted problems, reference and naive solutions, scoring anchors, the session script, the papers wiki and calibration data. Interviewers unlock it with a key; candidates can't.
@@ -81,7 +81,7 @@ The given parts already work at boot: runner, SQLite, mock and app shell, with o
 ### Repository layout
 
 ```
-research-feature-interview/
+technical-feature-interview/
 ├── README.md                 setup in one page; sandbox statement (§9)
 ├── AGENTS.md                 neutral: commands, layout, tests (§4.9)
 ├── docs/TDD.md               this document
@@ -404,7 +404,7 @@ Langfuse is MIT-licensed; keep its licence notice alongside anything lifted, and
 
 ## 13. Rollout
 
-1. **You** create `collect-intel/research-feature-interview` (private, template enabled) and attach it to the working session.
+1. **You** create `collect-intel/technical-feature-interview` (private, template enabled) and attach it to the working session.
 2. **App skeleton** *(done)*: boot, `doctor`, mock replayer, runner, schema, web shell, `check.yml` on three operating systems.
 3. **Sealing** *(done)*: `seal`, `unseal`, `scenario` and `codes`; the pre-commit hook; the canary scan.
 4. **Sealed zone** *(partly done: reference solutions, `check:interviewer`, problem drafts)*: generators, scenarios and naive solutions for the four packs.

@@ -1,4 +1,4 @@
-# Research-feature interview
+# Technical feature interview
 
 A small app, **Mini Studio**, for a two-hour interview: you read a research paper, plan with
 your own AI tools, and build one feature end to end on top of a working evaluation runner.

@@ -21,7 +21,7 @@ jobs:
       - name: No sealed material in plain text
         run: npm run check:canary
       - name: Known-answer tests fail until a feature is built
-        if: github.repository == 'collect-intel/research-feature-interview'
+        if: github.repository == 'collect-intel/technical-feature-interview'
         shell: bash
         run: |
           if npm run test:known-answer; then
