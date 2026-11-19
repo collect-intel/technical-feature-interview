@@ -12,6 +12,7 @@ export function App() {
   else if (route[0] === "runs" && route[1] && route[2] === "diversity") page = <NotBuilt brief="model-monoculture" runId={route[1]} />;
   else if (route[0] === "runs" && route[1]) page = <RunDetail id={route[1]} />;
   else if (route[0] === "lab") page = <NotBuilt brief="convention-lab" />;
+  else if (route[0] === "agents") page = <NotBuilt brief="agent-fidelity" />;
   else page = <Runs />;
   return (
     <div className="shell">
@@ -20,6 +21,7 @@ export function App() {
         <nav>
           <Link to="/">Runs</Link>
           <Link to="/lab">Lab</Link>
+          <Link to="/agents">Agents</Link>
         </nav>
         <span className="scenario">{scenario ? scenario.title : "…"}</span>
       </header>

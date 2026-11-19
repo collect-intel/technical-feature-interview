@@ -20,7 +20,7 @@ in this folder (standard library `sqlite3` only, no installs).
 | `MOCK_URL` | The model gateway, if the method needs to call it (embeddings, agents) |
 | `LAB_PARAMS` | Lab only: the simulation parameters as JSON |
 
-`<id>` is the run id (`panel`, `diversity`) or a batch id that groups simulations (`lab`).
+`<id>` is the run id (`panel`, `diversity`), a batch id that groups simulations (`lab`), or the study id (`fidelity`).
 Exit 0 on success. Anything on stderr is shown when a test fails.
 
 ## What the row must contain
@@ -28,7 +28,7 @@ Exit 0 on success. Anything on stderr is shown when a test fails.
 | Column | Contents |
 |---|---|
 | `run_id` | The id you were called with |
-| `method` | `panel`, `diversity` or `lab` |
+| `method` | `panel`, `diversity`, `lab` or `fidelity` |
 | `method_version` | Your version string; change it when the computation changes |
 | `params_json` | The settings the method ran with |
 | `interpretations_json` | Every choice you made where the paper is ambiguous, as data |

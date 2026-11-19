@@ -24,7 +24,7 @@ Decisions for reviewers to weigh in on:
 3. **The mock server is a generic replayer.** It contains no trap logic. Planted problems exist only as data, generated in the sealed zone and shipped as encrypted scenarios (§4.3, §5).
 4. **Extract from Weval Studio rather than strip it.** We lift Studio's pure modules (blueprint schema, matchers, seeded PRNG) and rebuild a small runner modelled on its plan → cell → finish. Studio itself is never booted (§11).
 5. **Boots locally with no Docker, no API keys and no native builds:** Node with the built-in `node:sqlite` and `node:crypto`, Vite + React, and a local mock HTTP server (§4.1).
-6. **Papers plug in as "paper packs."** The app, runner, sealing, rubric and session format don't depend on the paper. Each paper adds one pack: a brief, a generator module, planted problems, reference and naive solutions, a known-answer test and scoring anchors. Three packs are active per round, one per candidate by seed (§6.5).
+6. **Papers plug in as "paper packs."** The app, runner, sealing, rubric and session format don't depend on the paper. Each paper adds one pack: a brief, a generator module, planted problems, reference and naive solutions, a known-answer test and scoring anchors. Four packs exist (Judge Panel Trust, Model Monoculture, Convention Lab, Agent Fidelity); a round activates any of them, one per candidate by seed (§6.5).
 7. **Candidate time is capped at about 3 hours**, and nothing a candidate builds is used in a product (§9).
 8. **Each planted problem is tested.** CI unlocks the sealed zone with a repository secret and proves that the reference solution catches each problem and a naive solution falls for it (§12).
 
@@ -149,6 +149,7 @@ A small HTTP server that **only replays the decrypted scenario**. Reading its so
 | `POST /v1/judge` | Judge verdicts, keyed by (judge, cell, criterion) |
 | `POST /v1/embed` | Embedding vectors, keyed by a hash of the content |
 | `POST /v1/agent` | Agent moves for the naming game, keyed by (simulation, step, agent) |
+| `POST /v1/survey` | A participant agent's survey answer, keyed by (condition, participant, item) |
 
 For each request key and attempt, the scenario can specify latency, a `429` with `Retry-After` (rate limits are a token bucket per provider), a `5xx`, a timeout or a malformed body. The attempt count lives in the mock's memory, so a restart resets it; that's what makes crash-and-resume testable. The same scenario and request order always give the same responses.
 
@@ -171,6 +172,10 @@ verdicts    (cell_id, criterion_id, judge_id, verdict, score, raw)
 embeddings  (content_hash, model, vector BLOB)
 sim_runs    (id, params_json, seed, status, progress)          -- Convention Lab
 sim_events  (sim_run_id, step, agent_a, agent_b, offered_json, choice_a, choice_b, success)
+studies     (id, title, conditions_json)                       -- Agent Fidelity
+study_participants (study_id, participant_id, groups_json)
+study_items (study_id, item_id, text, kind, options_json)
+study_answers (study_id, participant_id, item_id, wave, answer)   -- wave 1 and wave 2, two weeks apart
 call_log    (request_id, run_id, kind, model, prompt_version, attempt, status, latency_ms, cost_usd, at)
 jobs        (id, kind, payload_json, status, lease_until, attempts, last_error)
 analyses    (id, run_id, method, method_version, params_json, interpretations_json,
@@ -217,6 +222,7 @@ Each brief uses the Linear house format: an HMW line, problem, how it affects us
 | **Judge Panel Trust** | …help blueprint authors trust a verdict when their judges disagree? | A "Panel" tab: aggregated verdict per check with a method switch (majority vote, Inverse Surprising Popularity, Optimal Weight), judge weights, flags for problem judges, and how many verdicts differ from majority vote | Beyond Majority Voting ([arXiv 2510.01499](https://arxiv.org/abs/2510.01499), ICML 2026) |
 | **Model Monoculture** | …show authors when models converge on the same answer? | A "Diversity" view: collective similarity per model and condition, with intervals and a drill-down to the most typical responses | Doshi & Hauser, *Science Advances* 2024 ([PMC11244532](https://pmc.ncbi.nlm.nih.gov/articles/PMC11244532)) |
 | **Convention Lab** | …let researchers watch how norms form among agents? | A small app: configure a population, run the simulation as a job with progress and cancel, then show the convergence curve and a critical-mass sweep across seeds | Flint Ashery, Aiello & Baronchelli, *Science Advances* 2025 ([arXiv 2410.08948](https://arxiv.org/abs/2410.08948)) |
+| **Agent Fidelity** | …show researchers how faithfully each participant's AI agent answers as that person would? | An "Agents" page: the paper's normalized accuracy per agent condition, with an interval, broken down by group, plus the gap between the best- and worst-served groups | Park et al. 2024, *Generative Agent Simulations of 1,000 People* ([arXiv 2411.10109v1](https://arxiv.org/abs/2411.10109v1); later versions are a different paper) |
 
 ## 5. Sealing
 
@@ -305,7 +311,7 @@ Everything except the paper-specific content is generic, so a new paper means a 
 | Sealed | `interviewer/packs/<pack>/` | Problems, strengths, generator, reference, naive, anchors |
 | Sealed | `interviewer/wiki/<pack>.md` | The ingested paper (§6.4) |
 
-**Data shapes the mock already serves:** model responses, judge verdicts, embeddings and agent moves. Most evaluation and collective-intelligence papers fit one of these. A paper that needs something else adds **one new shape once**, and later packs reuse it. Examples: survey answer distributions, an approval matrix, agent task trials with human completion times.
+**Data shapes the mock already serves:** model responses, judge verdicts, embeddings, agent moves, and survey studies (people's answers at two points in time, loaded into `study_*` tables, plus agents' answers from `/v1/survey`). Most evaluation and collective-intelligence papers fit one of these. A paper that needs something else adds **one new shape once**, and later packs reuse it. Examples: survey answer distributions, an approval matrix, agent task trials with human completion times.
 
 **A paper fits if it passes this checklist.** The wiki ingest records the result.
 
@@ -321,7 +327,7 @@ Everything except the paper-specific content is generic, so a new paper means a 
 
 | Fits as-is | Fits after adding one data shape | Reading only (fails item 1) |
 |---|---|---|
-| Miller, Adding Error Bars to Evals (2024) | Santurkar et al., Whose Opinions (2023): survey distributions | All intelligence is collective intelligence |
+| Miller, Adding Error Bars to Evals (2024) | Santurkar et al., Whose Opinions (2023): survey distributions (the survey-study shape now covers part of this) | All intelligence is collective intelligence |
 | Bowyer et al., Don't Use the CLT (2025) | METR time horizon (2025): agent trials with human completion times | Collective intelligence in biology |
 | Dawid & Skene (1979) / AutoEval (2024) | Generative social choice (2023/2025): approval matrix | Minority influence and divergent thinking |
 | Ruan et al., Observational Scaling Laws (2024) | τ-bench pass^k (2024): repeated agent trials | Habermas Machine; Community Notes RLCF (both need training) |
@@ -401,7 +407,7 @@ Langfuse is MIT-licensed; keep its licence notice alongside anything lifted, and
 1. **You** create `collect-intel/research-feature-interview` (private, template enabled), attach it to the working session, and set the `INTERVIEWER_KEY` secret.
 2. **App skeleton** *(done)*: boot, `doctor`, mock replayer, runner, schema, web shell, `check.yml` on three operating systems.
 3. **Sealing** *(done)*: `seal`, `unseal`, `scenario` and `codes`; the pre-commit hook; the canary scan.
-4. **Sealed zone** *(partly done: reference solutions, `sealed.yml`, problem drafts)*: generators, scenarios and naive solutions for the first three packs.
+4. **Sealed zone** *(partly done: reference solutions, `sealed.yml`, problem drafts)*: generators, scenarios and naive solutions for the four packs.
 5. **Wiki ingest** of the first three papers, resolving every open question by reading the full texts.
 6. **Briefs** in the Linear house format; `docs/RUBRIC.md`; the session script and curveball cards.
 7. **Dry runs:** 1–2 internal people per paper. Record the results in `calibration/` and retune.

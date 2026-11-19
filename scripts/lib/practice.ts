@@ -5,6 +5,7 @@
 import { hashSeed } from "../../lib/prng/hashSeed.ts";
 import { mulberry32 } from "../../lib/prng/mulberry32.ts";
 import { chatKey, judgeKey, SCENARIO_VERSION, type Scenario } from "../../lib/scenario.ts";
+import { syntheticStudy } from "./study.ts";
 
 export const PRACTICE_CODE = "practice-meadow-lantern";
 
@@ -96,6 +97,7 @@ export function practiceScenario(round = "practice", seed = 7): Scenario {
     embeddings: {},
     embeddingDim: 64,
     agentModel: { listOrderWeight: [], namePrior: {}, memoryWeight: 2, temperature: 1 },
+    study: syntheticStudy({ id: "practice-study", seed, participants: 12, items: 8, retest: 0.8, conditions: { interview: 0.7, demographic: 0.55 } }),
     failures: [
       { endpoint: "chat", key: chatKey("t-beta-mid", "library-hours", 0), attempt: 1, kind: "500" },
       { endpoint: "judge", key: judgeKey("j3", "t-alpha-small", "recipe-swap", 0, "explains-why"), attempt: 1, kind: "malformed" },

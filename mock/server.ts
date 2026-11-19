@@ -9,6 +9,7 @@ import { mulberry32 } from "../lib/prng/mulberry32.ts";
 import {
   agentKey,
   chatKey,
+  surveyKey,
   fallbackEmbedding,
   judgeKey,
   latencyFor,
@@ -125,6 +126,14 @@ export function createMockServer(scenario: Scenario): Server {
               return { contentHash: h, embedding: scenario.embeddings[h] ?? fallbackEmbedding(h, scenario.embeddingDim) };
             }),
           }));
+        }
+        case "/v1/survey": {
+          const key = surveyKey(b.condition, b.participantId, b.itemId);
+          return handle("survey", key, `survey:${b.condition}`, res, () => {
+            if (!scenario.study) throw new Error("this scenario has no study");
+            if (!(key in scenario.study.agentAnswers)) throw new Error(`no agent answer for ${key}`);
+            return { answer: scenario.study.agentAnswers[key], usage: { input: 900, output: 8 } };
+          });
         }
         case "/v1/agent": {
           const key = agentKey(b.simId, Number(b.step), Number(b.agent));

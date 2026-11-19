@@ -7,6 +7,7 @@ import { loadScenario, type Scenario } from "../lib/scenario.ts";
 import { openDb, type DB } from "./db.ts";
 import { mockUrl } from "./gateway.ts";
 import { launchRun, startWorker } from "./runner.ts";
+import { loadStudy } from "./study.ts";
 
 export const API_PORT = Number(process.env.API_PORT ?? 3000);
 
@@ -54,6 +55,21 @@ const routes: [string, RegExp, Route][] = [
       const byCell = new Map<string, any[]>();
       for (const v of verdicts) byCell.set(v.cell_id, [...(byCell.get(v.cell_id) ?? []), v]);
       return cells.map((c) => ({ ...c, verdicts: byCell.get(c.id) ?? [] }));
+    },
+  ],
+  [
+    "GET",
+    /^\/api\/study$/,
+    (db, s) => {
+      if (!s.study) return null;
+      const count = (sql: string) => (db.prepare(sql).get(s.study!.id) as { n: number }).n;
+      return {
+        id: s.study.id,
+        title: s.study.title,
+        conditions: s.study.conditions,
+        participants: count("SELECT COUNT(*) AS n FROM study_participants WHERE study_id = ?"),
+        items: count("SELECT COUNT(*) AS n FROM study_items WHERE study_id = ?"),
+      };
     },
   ],
   [
@@ -121,6 +137,7 @@ async function waitForMock(timeoutMs = 15_000) {
 if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) {
   const scenario = loadScenario();
   const db = openDb();
+  loadStudy(db, scenario);
   startWorker(db, scenario);
   createApi(db, scenario).listen(API_PORT, async () => {
     console.log(`api     http://localhost:${API_PORT}`);

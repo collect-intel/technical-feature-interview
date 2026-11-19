@@ -34,7 +34,7 @@ export type Target = {
 export type Judge = { id: string; provider: string; model: string };
 
 export type Failure = {
-  endpoint: "chat" | "judge" | "embed" | "agent";
+  endpoint: "chat" | "judge" | "embed" | "agent" | "survey";
   key: string;
   attempt: number;
   kind: "429" | "500" | "timeout" | "malformed";
@@ -49,6 +49,22 @@ export type AgentModel = {
   memoryWeight: number;
   /** Softmax temperature. */
   temperature: number;
+};
+
+export type StudyItem = { id: string; text: string; kind: "categorical" | "ordinal"; options: string[] };
+
+/** A synthetic survey study: people answer twice (two weeks apart); agents answer once per condition. */
+export type Study = {
+  id: string;
+  title: string;
+  /** Ways the agents were built, e.g. "interview" and "demographic". */
+  conditions: string[];
+  participants: { id: string; groups: Record<string, string> }[];
+  items: StudyItem[];
+  /** key: `${participantId}|${itemId}`; null = the person didn't answer. */
+  answers: { wave1: Record<string, string | null>; wave2: Record<string, string | null> };
+  /** key: surveyKey(...); null = the agent declined to answer. */
+  agentAnswers: Record<string, string | null>;
 };
 
 export type Scenario = {
@@ -70,6 +86,7 @@ export type Scenario = {
   embeddings: Record<string, number[]>;
   embeddingDim: number;
   agentModel: AgentModel | null;
+  study?: Study;
   failures: Failure[];
   rateLimits: Record<string, { capacity: number; refillPerSec: number }>;
   latencyMs: { base: number; jitter: number };
@@ -89,6 +106,10 @@ export function judgeKey(
   criterionId: string,
 ): string {
   return `${judgeId}|${targetId}|${itemId}|${repeat}|${criterionId}`;
+}
+
+export function surveyKey(condition: string, participantId: string, itemId: string): string {
+  return `${condition}|${participantId}|${itemId}`;
 }
 
 export function agentKey(simId: string, step: number, agent: number): string {

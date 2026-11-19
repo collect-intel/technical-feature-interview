@@ -68,10 +68,37 @@ CREATE TABLE IF NOT EXISTS sim_events (
   success INTEGER NOT NULL,
   PRIMARY KEY (sim_run_id, step)
 );
+CREATE TABLE IF NOT EXISTS studies (
+  id TEXT PRIMARY KEY,
+  title TEXT NOT NULL,
+  conditions_json TEXT NOT NULL        -- the agent conditions, e.g. ["interview", "demographic"]
+);
+CREATE TABLE IF NOT EXISTS study_participants (
+  study_id TEXT NOT NULL,
+  participant_id TEXT NOT NULL,
+  groups_json TEXT NOT NULL,           -- e.g. {"ideology": "moderate", "race": "...", "gender": "..."}
+  PRIMARY KEY (study_id, participant_id)
+);
+CREATE TABLE IF NOT EXISTS study_items (
+  study_id TEXT NOT NULL,
+  item_id TEXT NOT NULL,
+  text TEXT NOT NULL,
+  kind TEXT NOT NULL,                  -- categorical | ordinal
+  options_json TEXT NOT NULL,          -- ordered options
+  PRIMARY KEY (study_id, item_id)
+);
+CREATE TABLE IF NOT EXISTS study_answers (
+  study_id TEXT NOT NULL,
+  participant_id TEXT NOT NULL,
+  item_id TEXT NOT NULL,
+  wave INTEGER NOT NULL,               -- 1 = first answers, 2 = the same person two weeks later
+  answer TEXT,                         -- null = didn't answer
+  PRIMARY KEY (study_id, participant_id, item_id, wave)
+);
 CREATE TABLE IF NOT EXISTS call_log (
   request_id TEXT PRIMARY KEY,
   run_id TEXT,
-  kind TEXT NOT NULL,                  -- chat | judge | embed | agent
+  kind TEXT NOT NULL,                  -- chat | judge | embed | agent | survey
   model TEXT,
   prompt_version TEXT,
   attempt INTEGER NOT NULL,

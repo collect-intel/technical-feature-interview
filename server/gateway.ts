@@ -22,7 +22,7 @@ export class CallFailed extends Error {
 
 type CallMeta = {
   runId: string | null;
-  kind: "chat" | "judge" | "embed" | "agent";
+  kind: "chat" | "judge" | "embed" | "agent" | "survey";
   model: string | null;
   promptVersion: string | null;
 };

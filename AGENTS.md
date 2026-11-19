@@ -18,6 +18,7 @@ stripping: no build step. Imports carry `.ts` extensions, type-only imports use
 - `server/runner.ts`: plan → cell → finish, with jobs leased in SQLite
 - `server/gateway.ts`: calls to the mock, with retries and a `call_log` row per attempt
 - `server/db.ts`: schema
+- `server/study.ts`: loads a scenario's survey study into the `studies` and `study_*` tables
 - `server/api.ts`: HTTP routes
 - `mock/server.ts`: replays the loaded scenario (`.scenario/scenario.json`)
 - `apps/web/src/`: pages and the hash router

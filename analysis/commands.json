@@ -1,5 +1,6 @@
 {
   "panel": ["node", "server/analysis/panel.ts"],
   "diversity": ["node", "server/analysis/diversity.ts"],
-  "lab": ["node", "server/analysis/lab.ts"]
+  "lab": ["node", "server/analysis/lab.ts"],
+  "fidelity": ["node", "server/analysis/fidelity.ts"]
 }
