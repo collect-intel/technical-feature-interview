@@ -1,0 +1,8 @@
+node_modules/
+data/
+.scenario/
+interviewer/
+.interviewer-key
+*.db
+*.db-*
+apps/web/dist/

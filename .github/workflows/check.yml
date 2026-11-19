@@ -1,0 +1,30 @@
+name: check
+on: [push, pull_request]
+
+jobs:
+  check:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        node: [22, 24]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm ci
+      - run: npm run doctor
+      - run: npm run test:given
+      - run: npm run typecheck
+      - name: No sealed material in plain text
+        run: npm run check:canary
+      - name: Known-answer tests fail until a feature is built
+        if: github.repository == 'collect-intel/research-feature-interview'
+        shell: bash
+        run: |
+          if npm run test:known-answer; then
+            echo "A known-answer test passed on the template repo: a solution has leaked into the open zone." >&2
+            exit 1
+          fi

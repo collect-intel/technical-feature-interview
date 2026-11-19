@@ -1,0 +1,27 @@
+name: sealed
+on: [push, pull_request]
+
+# Runs only where the INTERVIEWER_KEY secret exists, so candidates' copies skip it.
+jobs:
+  sealed:
+    runs-on: ubuntu-latest
+    env:
+      INTERVIEWER_KEY: ${{ secrets.INTERVIEWER_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+        if: env.INTERVIEWER_KEY != ''
+      - uses: actions/setup-node@v4
+        if: env.INTERVIEWER_KEY != ''
+        with:
+          node-version: 22
+      - if: env.INTERVIEWER_KEY != ''
+        run: npm ci
+      - name: Unseal
+        if: env.INTERVIEWER_KEY != ''
+        run: npm run unseal
+      - name: Reference solutions pass the known-answer tests
+        if: env.INTERVIEWER_KEY != ''
+        run: ANALYSIS_COMMANDS=interviewer/reference/commands.json npm run test:known-answer
+      - name: Sealed checks (planted problems caught by reference, missed by naive)
+        if: env.INTERVIEWER_KEY != '' && hashFiles('interviewer/ci.ts') != ''
+        run: node interviewer/ci.ts

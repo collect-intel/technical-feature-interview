@@ -1,0 +1,33 @@
+{
+  "name": "research-feature-interview",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22.18" },
+  "scripts": {
+    "postinstall": "node scripts/hooks.ts",
+    "dev": "node --disable-warning=ExperimentalWarning scripts/dev.ts",
+    "doctor": "node --disable-warning=ExperimentalWarning scripts/doctor.ts",
+    "scenario": "node scripts/scenario.ts",
+    "reset": "node scripts/reset.ts",
+    "test": "node --disable-warning=ExperimentalWarning --test --test-concurrency=1 \"tests/**/*.test.ts\"",
+    "test:given": "node --disable-warning=ExperimentalWarning --test --test-concurrency=1 \"tests/given/*.test.ts\"",
+    "test:known-answer": "node --disable-warning=ExperimentalWarning --test --test-concurrency=1 \"tests/known-answer/*.test.ts\"",
+    "typecheck": "tsc --noEmit",
+    "check:canary": "node scripts/check-canary.ts",
+    "keygen": "node scripts/keygen.ts",
+    "seal": "node scripts/seal.ts",
+    "unseal": "node scripts/unseal.ts",
+    "codes": "node scripts/codes.ts",
+    "build:scenarios": "node scripts/build-scenarios.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22.18.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11"
+  }
+}
