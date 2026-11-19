@@ -2,7 +2,9 @@
   "name": "research-feature-interview",
   "private": true,
   "type": "module",
-  "engines": { "node": ">=22.18" },
+  "engines": {
+    "node": ">=22.18"
+  },
   "scripts": {
     "postinstall": "node scripts/hooks.ts",
     "dev": "node --disable-warning=ExperimentalWarning scripts/dev.ts",
@@ -18,7 +20,8 @@
     "seal": "node scripts/seal.ts",
     "unseal": "node scripts/unseal.ts",
     "codes": "node scripts/codes.ts",
-    "build:scenarios": "node scripts/build-scenarios.ts"
+    "build:scenarios": "node scripts/build-scenarios.ts",
+    "check:interviewer": "node scripts/check-interviewer.ts"
   },
   "devDependencies": {
     "@types/node": "^22.18.0",

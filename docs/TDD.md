@@ -26,7 +26,7 @@ Decisions for reviewers to weigh in on:
 5. **Boots locally with no Docker, no API keys and no native builds:** Node with the built-in `node:sqlite` and `node:crypto`, Vite + React, and a local mock HTTP server (§4.1).
 6. **Papers plug in as "paper packs."** The app, runner, sealing, rubric and session format don't depend on the paper. Each paper adds one pack: a brief, a generator module, planted problems, reference and naive solutions, a known-answer test and scoring anchors. Four packs exist (Judge Panel Trust, Model Monoculture, Convention Lab, Agent Fidelity); a round activates any of them, one per candidate by seed (§6.5).
 7. **Candidate time is capped at about 3 hours**, and nothing a candidate builds is used in a product (§9).
-8. **Each planted problem is tested.** CI unlocks the sealed zone with a repository secret and proves that the reference solution catches each problem and a naive solution falls for it (§12).
+8. **Each planted problem is tested.** Before each round, an interviewer runs `npm run check:interviewer`, which proves the reference solution catches each problem and a naive solution falls for it (§12). The key never leaves the password manager: no CI secret.
 
 **Goals:**
 - An interview that measures the real job: read a paper, check an AI-made plan against it, ship a feature honestly end to end.
@@ -98,7 +98,7 @@ research-feature-interview/
 ├── scripts/                  doctor · scenario · reset · seal · unseal
 ├── interviewer.sealed        the sealed zone, one encrypted file
 ├── .githooks/pre-commit      refuses to commit plaintext from interviewer/
-└── .github/workflows/        check.yml (everyone) · sealed.yml (org only, §12)
+└── .github/workflows/        check.yml: boot, tests and leak checks on Mac, Linux and Windows
 ```
 
 Once unsealed, the sealed zone unpacks to `interviewer/`, which is git-ignored:
@@ -240,7 +240,7 @@ Each brief uses the Linear house format: an HMW line, problem, how it affects us
 
 | File | Key | Who unlocks it | When |
 |---|---|---|---|
-| `interviewer.sealed` | The **interviewer key**: 32 random bytes (base64url) from `npm run keygen`, kept in the team password manager and as the repo secret `INTERVIEWER_KEY` | Interviewers and maintainers | `npm run unseal`, once per machine |
+| `interviewer.sealed` | The **interviewer key**: 32 random bytes (base64url) from `npm run keygen`, kept in the team password manager only | Interviewers and maintainers | `npm run unseal`, once per machine |
 | `scenarios/<id>.enc` | A **session code**: 6 words, derived from the interviewer key with HKDF over (round, scenario) | The candidate, at the start of the session | `npm run scenario -- <code>` |
 
 Session codes are **derived, not stored**. `npm run codes -- <round>` regenerates the code sheet from the interviewer key, so there's no list of codes to lose. A session code opens only its own scenario; it can't open the sealed zone or other scenarios.
@@ -257,7 +257,7 @@ Session codes are **derived, not stored**. `npm run codes -- <round>` regenerate
 1. `interviewer/` and `.scenario/` are git-ignored.
 2. A pre-commit hook (enabled by `npm install` via `core.hooksPath`) refuses any staged file containing the **canary line** that `seal` writes at the top of every sealed file.
 3. CI fails if any tracked file contains the canary. The canary is public and harmless; it exists to be detected.
-4. The org-only CI job unseals and scans every tracked file for each problem's distinctive phrases (§12).
+4. `npm run check:interviewer` (§12) scans every tracked file for each problem's distinctive phrases.
 
 ### 5.5 Threat model
 
@@ -332,7 +332,7 @@ Everything except the paper-specific content is generic, so a new paper means a 
 | Dawid & Skene (1979) / AutoEval (2024) | Generative social choice (2023/2025): approval matrix | Minority influence and divergent thinking |
 | Ruan et al., Observational Scaling Laws (2024) | τ-bench pass^k (2024): repeated agent trials | Habermas Machine; Community Notes RLCF (both need training) |
 
-**Adding a pack.** Ingest the paper into the wiki, run the checklist, write the pack, then make `sealed.yml` pass. That means the reference solution catches every problem and the naive one falls for each (§12). Finally dry-run with 1–2 internal people. Budget **2–3 days per pack**, plus a day if it needs a new data shape.
+**Adding a pack.** Ingest the paper into the wiki, run the checklist, write the pack, then make `npm run check:interviewer` pass. That means the reference solution catches every problem and the naive one falls for each (§12). Finally dry-run with 1–2 internal people. Budget **2–3 days per pack**, plus a day if it needs a new data shape.
 
 **Rotation.** `rounds/<round>.json` lists the active packs and their scenario IDs. A round can mix new and existing packs. Scores compare across packs because the rubric's dimensions are shared and only the anchors differ by pack; calibration (§8) is tracked per pack.
 
@@ -394,8 +394,8 @@ Langfuse is MIT-licensed; keep its licence notice alongside anything lifted, and
 - Known-answer tests confirmed to *fail* on a fresh checkout.
 - Canary scan: no plaintext from the sealed zone is tracked (§5.4).
 
-**`sealed.yml`** runs only where the `INTERVIEWER_KEY` secret exists, so in candidates' copies it skips without failing:
-1. **Unseal**, then check that the generator is deterministic: the same round, paper and seed give byte-identical scenarios.
+**`npm run check:interviewer`** runs on an interviewer's machine before each round, after `npm run unseal` (no CI secret, so the key stays in the password manager):
+1. Check that the generator is deterministic: the same round, paper and seed give byte-identical scenarios.
 2. **The reference solutions pass:** the known-answer tests run against `interviewer/reference/` (`ANALYSIS_COMMANDS=interviewer/reference/commands.json npm run test:known-answer`), and every planted problem is caught.
 3. **Every planted problem is real:** for each one, the naive solution must *fail* its check. A problem the naive approach doesn't fall for tests nothing, and CI fails.
 4. **The scenarios match the ciphertext:** decrypting each `scenarios/*.enc` with its derived code gives exactly what the generator produces for that round and seed.
@@ -404,10 +404,10 @@ Langfuse is MIT-licensed; keep its licence notice alongside anything lifted, and
 
 ## 13. Rollout
 
-1. **You** create `collect-intel/research-feature-interview` (private, template enabled), attach it to the working session, and set the `INTERVIEWER_KEY` secret.
+1. **You** create `collect-intel/research-feature-interview` (private, template enabled) and attach it to the working session.
 2. **App skeleton** *(done)*: boot, `doctor`, mock replayer, runner, schema, web shell, `check.yml` on three operating systems.
 3. **Sealing** *(done)*: `seal`, `unseal`, `scenario` and `codes`; the pre-commit hook; the canary scan.
-4. **Sealed zone** *(partly done: reference solutions, `sealed.yml`, problem drafts)*: generators, scenarios and naive solutions for the four packs.
+4. **Sealed zone** *(partly done: reference solutions, `check:interviewer`, problem drafts)*: generators, scenarios and naive solutions for the four packs.
 5. **Wiki ingest** of the first three papers, resolving every open question by reading the full texts.
 6. **Briefs** in the Linear house format; `docs/RUBRIC.md`; the session script and curveball cards.
 7. **Dry runs:** 1–2 internal people per paper. Record the results in `calibration/` and retune.
