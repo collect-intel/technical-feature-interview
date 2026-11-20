@@ -1,6 +1,9 @@
 # Convention Lab
 
 > **Sandbox exercise.** Synthetic data only; nothing built here is used in a CIP product.
+>
+> **You won't finish this in the session, and you don't need to.** This is the whole feature; start
+> with the test and get as far as you get.
 
 **HMW** let researchers watch how shared norms form in a population of AI agents?
 

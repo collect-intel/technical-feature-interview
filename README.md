@@ -4,12 +4,12 @@
 
 At CIP, research on collective intelligence and AI evaluation keeps turning into product: a
 method from a paper becomes a page in Weval Studio that someone relies on. This interview is
-that job in miniature. You read a short paper, plan with whatever AI tools you normally use,
-and build one feature end to end in a small app called **Mini Studio**: the computation, the
-API, and the page a user sees.
+that job in miniature. You read one short paper, then start building a feature from it in a
+small app called **Mini Studio**, with whatever AI tools you normally use.
 
-It's a two-hour live session, not a take-home. It's fine if you don't finish: how you reason
-through the work tells us more than how much of it you ship.
+It's a one-hour live session, not a take-home. **We don't expect you to finish.** We want to
+see how you work: how you read the paper, how you use and check your AI tools, and how you
+reason when something doesn't add up.
 
 > **This is a sandbox.** All data is synthetic, nothing calls a real model, and nothing you
 > build here is used in any CIP product.
@@ -30,12 +30,14 @@ came from where. Tell us which tools you used and share your screen while you wo
 
 ## What we're looking for
 
-We score six things, each from 1 to 4. The full rubric is in [docs/RUBRIC.md](docs/RUBRIC.md).
+We score six things, each from 1 to 4, from what we see you do. The last three depend on how
+far you get, so we only score them if we see them; nobody is marked down for not reaching
+them. The full rubric is in [docs/RUBRIC.md](docs/RUBRIC.md).
 
 1. **Research faithfulness**: you build the method the paper actually describes, and you
    notice where it's vague.
-2. **Evaluation first**: you use the known-answer test to drive the computation, and get it
-   passing before you build the page.
+2. **Evaluation first**: you start from the known-answer test and use it to drive the
+   computation.
 3. **System design**: the computation runs off the request path and its results can be traced
    back to their settings.
 4. **Product**: the feature works for the person in the brief, including when data is missing
@@ -77,23 +79,22 @@ and the acceptance criteria.
 | [Convention Lab](briefs/convention-lab.md) | Flint Ashery, Aiello & Baronchelli (2025) | A small lab for watching AI agents settle on shared norms |
 | [Agent Fidelity](briefs/agent-fidelity.md) | Park et al. (2024) | A check on how faithfully each person's AI agent answers as they would |
 
-### Requirements for every brief
+### How to approach it
 
 1. **Start with the test.** Each brief has a test in `tests/known-answer/` that fails until
-   you build the feature. Make it pass before you build the page.
-2. **Follow the paper.** Where it's vague, make a choice and write it down. Record it in the
-   result itself (see [analysis/README.md](analysis/README.md)) as well as in your notes.
+   the feature exists. Work towards it before anything else.
+2. **Follow the paper.** Where it's vague, make a choice and say it out loud. If you get to
+   writing results, record the choice in the result itself (see
+   [analysis/README.md](analysis/README.md)).
 3. **Follow the analysis contract** in [analysis/README.md](analysis/README.md). You can write
    the computation in TypeScript or Python.
-4. **Build the page** the brief describes, in the Next.js app under `app/`.
-5. **Show the result honestly.** If a number is uncertain, partial or excludes something, the
-   page should say so.
+4. **The page comes last.** The brief describes it, but you probably won't reach it, and
+   that's fine. Tell us what it would need to show.
 
 ### On scale
 
-The data in the practice scenario is small. Design as if it could be 10 to 100 times larger.
-At some point during the session we'll change the requirements to test this. If you take a
-shortcut, say how you'd scale it.
+The data in the practice scenario is small. Assume it could be 10 to 100 times larger. At the
+end we'll ask how you'd handle a change in requirements.
 
 ### The scenario isn't clean
 
@@ -103,13 +104,12 @@ the job, and the rubric rewards it.
 
 ## The session
 
-| Before (up to 1 hour, your time) | Read your paper. Run the app. Read your brief. |
+| Before (about 30 minutes, your time) | Skim your paper. Run the app and `npm run doctor`. Read your brief. |
 |---|---|
+| **5 minutes** | Load the scenario file we send you, and share your screen. |
 | **10 minutes** | Tell us what the paper's method does and one thing it leaves unspecified. |
-| **15 minutes** | Plan with your AI tools. Show us where the plan differs from the paper. |
-| **15 minutes** | Talk us through your design: data model, where the computation runs, the API. |
-| **65 minutes** | Build. Partway through, we'll change one requirement. |
-| **15 minutes** | Demo it. Walk us through your notes, and one piece of AI-written code you kept and why it's correct. |
+| **35 minutes** | Work on the feature with your AI tools, thinking aloud. We'll ask a couple of questions along the way. |
+| **10 minutes** | What you'd do next, how you'd handle a change we describe, and one piece of AI-written code you kept and why it's correct. |
 
 At the start, your interviewer will send you a scenario file. Stop the app, then run:
 
@@ -120,10 +120,8 @@ npm run dev
 
 ## What to hand in
 
-- **Your code**, committed to your own copy of this repository. Keep it private and invite
-  your interviewer.
-- **A short `NOTES.md`**: where you departed from the paper or from your AI's plan and why,
-  what you'd do next, and which AI tools you used. A few lines is enough.
+Nothing. The work happens on screen. If you'd like us to look at what you had at the end,
+push it to a private copy of this repository and invite your interviewer.
 
 ## Useful commands
 

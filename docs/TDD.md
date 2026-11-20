@@ -8,7 +8,7 @@
 
 ## 1. Summary
 
-A hiring loop for a mid-level engineer who turns a research paper into a working product feature. In a two-hour session, the candidate uses their own AI tools to read a paper, plan, and build one feature end to end in a small app that runs on their laptop. They are graded on research faithfulness, evaluation, system design, product judgment and how they use AI.
+A hiring loop for a mid-level engineer who turns a research paper into a working product feature. In a one-hour live session, the candidate uses their own AI tools to read one paper and start building a feature from it in a small app that runs on their laptop. They aren't expected to finish: the session is for watching how they work. They are graded on research faithfulness, evaluation, system design, product judgment and how they use AI.
 
 **There are two repos:**
 
@@ -25,7 +25,7 @@ Decisions for reviewers to weigh in on:
 4. **Extract from Weval Studio rather than strip it.** We lift Studio's pure modules (blueprint schema, matchers, seeded PRNG) and rebuild a small runner modelled on its plan → cell → finish. Studio itself is never booted (§11).
 5. **A plain Next.js app that boots with `npm install && npm run dev`:** no Docker, no API keys, no native builds. One server process holds the pages, the API, the job worker and the mock model gateway (served at `/mock`), with Node's built-in `node:sqlite`. The practice scenario is built in code and loads itself on first boot (§4.1).
 6. **Papers plug in as "paper packs."** The app, runner, rubric and session format don't depend on the paper. Each paper adds one pack: a brief, a generator module, planted problems, reference and naive solutions, a known-answer test and scoring anchors. Four packs exist (Judge Panel Trust, Model Monoculture, Convention Lab, Agent Fidelity); a round activates any of them, one per candidate by seed (§6.5).
-7. **Candidate time is capped at about 3 hours**, and nothing a candidate builds is used in a product (§9).
+7. **One hour live, about 30 minutes of preparation, and no expectation of finishing.** We're watching how candidates work, not how much they ship. Nothing a candidate builds is used in a product (§9).
 8. **Each planted problem is tested.** Before each round, an interviewer runs `npm run check` in the interviewer repo, which proves the reference solution passes every known-answer test, and (once naive solutions exist) that a naive solution falls for each problem (§12).
 
 **Goals:**
@@ -331,25 +331,24 @@ Everything except the paper-specific content is generic, so a new paper means a 
 
 | Stage | Time | What happens |
 |---|---|---|
-| Before | ≤ 1 h, candidate's own time | A human call first. Then the repo link, their one paper and `doctor`, 48 h ahead |
-| Read the brief and synthesize the paper | 10 min | NotebookLM or similar; the candidate names one thing the paper leaves unspecified |
-| Plan | 15 min | Claude or similar writes a plan; the candidate shows where it departs from the paper. Elicit is optional, for finding a paper that challenges the method |
-| Design review | 15 min | Data model, where the computation runs, API shape |
-| Build | 65 min | One curveball partway through |
-| Demo and defence | 15 min | Demo, a deviations note, and **the AI delta**: one AI-written function they kept, and why it's correct |
+| Before | About 30 min, candidate's own time | A human call first. Then the prep doc, the repo link, their one paper and `doctor`, 48 h ahead |
+| Setup | 5 min | The candidate loads the scenario file and shares their screen |
+| The paper | 10 min | The candidate says what the method does and names one thing it leaves unspecified |
+| Work | 35 min | They plan and build with their AI tools, thinking aloud. Two fixed questions: "Where does this plan differ from the paper?" and, when something looks odd, "What do you think is going on?" |
+| Debrief | 10 min | What they'd do next; the pack's curveball as a "how would you handle…?" question; and **the AI delta**: one AI-written function they kept, and why it's correct |
 
-The candidate shares their screen throughout. The interviewer scores live and finalizes within 24 hours.
+The candidate shares their screen throughout. **They aren't expected to finish.** The interviewer scores live and finalizes within 24 hours.
 
 ## 8. Scoring
 
-- Each of the six rubric dimensions (§2) is scored 1–4, using the per-paper anchors in the interviewer repo (§6.3).
+- Each of the six rubric dimensions (§2) is scored 1–4, using the per-paper anchors in the interviewer repo (§6.3). System design, Product and Honest output are scored only if seen, in code or in how the candidate says they'd build it; an unfinished build never lowers a score.
 - **No single total score.** The hiring decision reads the profile.
 - **One instrument.** The scorecard interviewers fill in must use these same dimensions and scale. If the hiring scorecard asks for anything else, change this rubric and `docs/RUBRIC.md` so candidates prepare against what they're graded on.
 - **Calibration:** after every 10 candidates, compare score distributions by paper. If one paper is noticeably harder, retune its `problems.yaml` for the next round. **Never adjust candidates' scores after the fact.**
 
 ## 9. Candidate experience and fairness
 
-- **Time cap:** about 3 hours in total. Anything longer gets paid.
+- **Time:** one hour live plus about 30 minutes of preparation. Nothing to hand in afterwards.
 - **Sandbox statement** at the top of the README and every brief: this is an interview exercise on synthetic data, and nothing built is used in a CIP product. Hiring guides document take-homes being used as unpaid product ideation, and our features resemble real Studio features, so we say so up front.
 - **A human conversation comes before anything is sent.**
 - **The rubric is published** in advance, and so is the fact that problems are planted.
@@ -407,11 +406,10 @@ Weval Studio is MIT-licensed (it builds on Langfuse, also MIT); keep its licence
 ## 14. Open questions
 
 - **Stack:** TypeScript (this document's default) if the hire works mainly in Studio, or Python if mainly on the data platform. Python is in about 72% of AI-engineering postings. The language-neutral analysis contract (§4.6) covers the gap for now.
-- **Pay:** a flat fee for the session, or only past 3 hours?
 - **Tool accounts:** provide Elicit and NotebookLM access, or allow any equivalent tool (current default)?
 - **Paper details to confirm:** two planted problems depend on gaps that the papers' appendices might resolve. They stay provisional until the wiki ingest (rollout step 5).
 - **Scorecard:** reconcile the hiring scorecard with the rubric in §2 (§8, "one instrument").
-- **Convention Lab scope:** the simulator alone fills most of the build. Its brief now marks the critical-mass sweep and cancel as stretch goals; confirm in dry runs.
+- **How far candidates get in 35 minutes:** probably the test for Model Monoculture and Agent Fidelity, part of it for Judge Panel Trust, and the start of the simulator for Convention Lab. That's fine for scoring how they work, but confirm in dry runs that every pack gives the interviewer enough to see.
 - **Interviewers:** who is trained, and how many shadow sessions each before running one alone?
 - **Senior variant:** Community Notes bridging or generative social choice, with an ambiguous brief rather than a scoped one.
 - **Future rotation:** [AGORA](https://arxiv.org/pdf/2611.05556) and [Nine Judges, Two Effective Votes](https://arxiv.org/html/2605.29800v1), once they've been through peer review.
