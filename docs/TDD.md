@@ -331,7 +331,7 @@ Everything except the paper-specific content is generic, so a new paper means a 
 
 | Stage | Time | What happens |
 |---|---|---|
-| Before | ≤ 1 h, candidate's own time | A human call first. Then the repo link, the papers and `doctor`, 48 h ahead |
+| Before | ≤ 1 h, candidate's own time | A human call first. Then the repo link, their one paper and `doctor`, 48 h ahead |
 | Read the brief and synthesize the paper | 10 min | NotebookLM or similar; the candidate names one thing the paper leaves unspecified |
 | Plan | 15 min | Claude or similar writes a plan; the candidate shows where it departs from the paper. Elicit is optional, for finding a paper that challenges the method |
 | Design review | 15 min | Data model, where the computation runs, API shape |
@@ -433,4 +433,4 @@ Weval Studio is MIT-licensed (it builds on Langfuse, also MIT); keep its licence
 | `better-sqlite3` | No: native build failures on Windows and fresh Macs; `node:sqlite` covers our needs |
 | Python throughout | Not by default, because we lift TypeScript from Studio. Python is allowed for the analysis stage; revisit under §14 |
 | Take-home only | No: watching how candidates use NotebookLM, Elicit and Claude is the point. The take-home part is limited to about 1 hour of pre-reading |
-| One paper for every candidate | No: it leaks between candidates. Four rotating papers on one rubric keep scores comparable |
+| The same paper for every candidate | No: it leaks between candidates. Each candidate gets one paper, rotated across four on one rubric, so scores stay comparable |

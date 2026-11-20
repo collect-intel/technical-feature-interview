@@ -67,7 +67,7 @@ and stores everything in a local database. We built it from Weval Studio's own r
 so it boots in seconds, and that part already works. Your job is to add one feature on top of
 it, based on a paper.
 
-We'll tell you which brief is yours. Each brief is a short ticket with the user, the problem
+You work on one paper. We'll tell you which brief is yours. Each brief is a short ticket with the user, the problem
 and the acceptance criteria.
 
 | Brief | Paper | You build |
