@@ -104,9 +104,8 @@ technical-feature-interview-interviewer/
 ├── CLAUDE.md          wiki rules (§6.4)
 ├── packs/<pack>/      one folder per paper (§6.5):
 │   ├── problems.md        planted problems, each citing the paper section it comes from
-│   ├── problems.yaml      their strengths, read by the generator (to write)
 │   └── anchors.md         scoring anchors with example answers (to write)
-├── generator/         seed → scenario file for a pack (to write)
+├── generator/         pack + seed → scenario file and answer key
 ├── reference/         the correct solution for each brief, with commands.json
 ├── naive/             solutions that follow a typical AI plan literally (to write)
 ├── rounds/            <round>.json: active packs and seeds (to write)
@@ -264,7 +263,8 @@ The planted problems and how to score them are documented in each pack's `packs/
 ### 6.1 Generator
 
 - **Deterministic:** `mulberry32` seeded from `hashSeed(round, paper, seed)`. These are the same functions as Studio's `cip-math/fns/prng`, and they're lifted into `lib/` (§11).
-- **Strength comes from each pack's `problems.yaml`**, so difficulty can be tuned without editing code.
+- **Strength is a few constants at the top of each pack's generator**, so difficulty can be tuned in one place.
+- **Each generator checks its own output** and redraws (deterministically) if a draw misses a planted problem, and writes an answer key for the interviewer beside the scenario.
 - **Every planted problem cites the paper section** whose gap it exploits. Problems are found in the papers, not invented.
 
 ### 6.2 Reference and naive solutions
@@ -387,17 +387,18 @@ Weval Studio is MIT-licensed (it builds on Langfuse, also MIT); keep its licence
 
 **`npm run check`** in the interviewer repo runs on an interviewer's machine before each round, with the candidate repo cloned alongside:
 1. **The reference solutions pass:** it copies the candidate repo to a temp folder, adds `reference/`, and runs the known-answer tests with `ANALYSIS_COMMANDS` pointing at the reference commands. *(Built.)*
-2. Check that the generator is deterministic: the same round, paper and seed give byte-identical scenarios. *(To build with the generators.)*
-3. **Every planted problem is real:** for each one, the naive solution must *fail* its check. A problem the naive approach doesn't fall for tests nothing. *(To build with the naive solutions.)*
-4. **No leaks:** every tracked file in the candidate repo is scanned for each problem's distinctive phrases. *(To build.)*
-5. **Wiki lint** (§6.4).
+2. **The generators are deterministic and plant what they should:** the same round, paper and seed give byte-identical scenarios, and each generator's own checks pass. *(Built.)*
+3. **Each scenario runs end to end:** the given runner finishes on it and the reference solution runs on the result. *(Built.)*
+4. **Every planted problem is real:** for each one, the naive solution must *fail* its check. A problem the naive approach doesn't fall for tests nothing. *(To build with the naive solutions.)*
+5. **No leaks:** every tracked file in the candidate repo is scanned for each problem's distinctive phrases. *(To build.)*
+6. **Wiki lint** (§6.4).
 
 ## 13. Rollout
 
 1. **You** create `collect-intel/technical-feature-interview` (private, template enabled) and attach it to the working session.
 2. **App skeleton** *(done)*: boot, `doctor`, mock replayer, runner, schema, web shell, `check.yml` on three operating systems.
 3. **Interviewer repo** *(done: split out of the candidate repo; reference solutions, `npm run check`, problem drafts)*.
-4. **Generators, naive solutions and the first round's scenario files** for the four packs. Blocks any real session.
+4. **Generators** *(done: all four packs, `npm run scenario` in the interviewer repo, checked end to end)* and **naive solutions** *(to do)*.
 5. **Wiki ingest** of the four papers, resolving every open question by reading the full texts.
 6. **Briefs** in the Linear house format; `docs/RUBRIC.md`; the session script and curveball cards.
 7. **Dry runs:** 1–2 internal people per paper. Record the results in `calibration/` and retune.
