@@ -1,3 +1,0 @@
-#!/bin/sh
-# Refuse commits that contain sealed interviewer material in plain text.
-exec node --disable-warning=ExperimentalWarning scripts/check-canary.ts --staged

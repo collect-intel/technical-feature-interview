@@ -7,7 +7,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { createMockServer } from "../../mock/server.ts";
 import type { Scenario } from "../../lib/scenario.ts";
-import { practiceScenario } from "../../scripts/lib/practice.ts";
+import { practiceScenario } from "../../lib/practice.ts";
 import { openDb, type DB } from "../../server/db.ts";
 
 export async function startMock(scenario: Scenario): Promise<{ url: string; close: () => Promise<void> }> {

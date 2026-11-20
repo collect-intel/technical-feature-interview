@@ -19,13 +19,11 @@ jobs:
       - run: npm run test:given
       - run: npm run typecheck
       - run: npm run build
-      - name: No sealed material in plain text
-        run: npm run check:canary
       - name: Known-answer tests fail until a feature is built
         if: github.repository == 'collect-intel/technical-feature-interview'
         shell: bash
         run: |
           if npm run test:known-answer; then
-            echo "A known-answer test passed on the template repo: a solution has leaked into the open zone." >&2
+            echo "A known-answer test passed on the template repo: a solution has leaked into the candidate repo." >&2
             exit 1
           fi

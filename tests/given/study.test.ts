@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { after, before, test } from "node:test";
 import { surveyKey } from "../../lib/scenario.ts";
 import { loadStudy } from "../../server/study.ts";
-import { syntheticStudy } from "../../scripts/lib/study.ts";
+import { syntheticStudy } from "../../lib/study.ts";
 import { startMock, tempDb, testScenario } from "../helpers/env.ts";
 
 const study = syntheticStudy({ id: "s1", seed: 3, participants: 5, items: 4, retest: 0.8, conditions: { interview: 0.7 } });

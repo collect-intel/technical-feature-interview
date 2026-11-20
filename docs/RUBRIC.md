@@ -6,7 +6,7 @@ whole profile. Your interviewer also has per-paper examples of each level.
 | Dimension | Mid-level bar | Below bar | Senior signal |
 |---|---|---|---|
 | **Research faithfulness** | Implements the paper's method correctly; catches where the AI plan departs from the paper; records a decision wherever the paper is ambiguous | Builds whatever the plan says | Questions whether the method fits this data |
-| **Evaluation first** | Gets the known-answer test passing *before* building the main logic | Tests at the end, or never | Adds a test of their own that exposes a problem in the data |
+| **Evaluation first** | Uses the known-answer test to drive the computation and gets it passing before building the page; checks one result by hand | Builds the page first and checks the numbers last, or never | Adds a test of their own that exposes a problem in the data |
 | **System design** | Sensible data model; computation off the request path; results versioned and re-runnable | Computes on every request; results can't be traced to their settings | Designs for the next feature as well as this one |
 | **Product** | Works end to end for the user in the brief; empty, partial and error states handled | Happy path only | Pushes back on the brief with a better user outcome |
 | **Honest output** | Intervals, exclusions and partial-run flags reach the screen | A bare number shown as fact | Explains the result's limits without being asked |

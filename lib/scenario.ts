@@ -120,7 +120,7 @@ export function loadScenario(dir = process.cwd()): Scenario {
   const path = join(dir, SCENARIO_FILE);
   if (!existsSync(path)) {
     throw new Error(
-      "No scenario loaded. Run `npm run scenario -- <code>` (the practice code is in README.md).",
+      "No scenario loaded. Run `npm run scenario -- <file>` with the file your interviewer sent.",
     );
   }
   const s = JSON.parse(readFileSync(path, "utf8")) as Scenario;

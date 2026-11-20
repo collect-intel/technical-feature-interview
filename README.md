@@ -34,7 +34,8 @@ We score six things, each from 1 to 4. The full rubric is in [docs/RUBRIC.md](do
 
 1. **Research faithfulness**: you build the method the paper actually describes, and you
    notice where it's vague.
-2. **Evaluation first**: you get the known-answer test passing before the main logic.
+2. **Evaluation first**: you use the known-answer test to drive the computation, and get it
+   passing before you build the page.
 3. **System design**: the computation runs off the request path and its results can be traced
    back to their settings.
 4. **Product**: the feature works for the person in the brief, including when data is missing
@@ -110,10 +111,10 @@ the job, and the rubric rewards it.
 | **65 minutes** | Build. Partway through, we'll change one requirement. |
 | **15 minutes** | Demo it. Walk us through your notes, and one piece of AI-written code you kept and why it's correct. |
 
-At the start, your interviewer will read you a six-word code. Stop the app, then run:
+At the start, your interviewer will send you a scenario file. Stop the app, then run:
 
 ```bash
-npm run scenario -- <the six words>
+npm run scenario -- path/to/the-file.json
 npm run dev
 ```
 
@@ -131,6 +132,7 @@ npm run dev
 | `npm run dev` | Runs the app at http://localhost:3000 |
 | `npm test` | Runs every test. The known-answer tests fail until you build a feature |
 | `npm run test:known-answer` | Runs only the known-answer tests |
+| `node --test tests/known-answer/panel.test.ts` | Runs one brief's test (swap in yours) |
 | `npm run reset` | Clears the database. Restart `npm run dev` for a fresh run |
 | `npm run doctor` | Checks your setup |
 
@@ -138,7 +140,6 @@ npm run dev
 
 - The repository is explained in full in [docs/TDD.md](docs/TDD.md), including parts you
   won't touch.
-- `interviewer.sealed` is encrypted interviewer material. You don't need it.
 - Some code in `lib/` comes from Weval Studio; see [lib/NOTICE.md](lib/NOTICE.md).
 
 Questions before your session, or something won't boot? Reply to your interviewer's email and we'll sort it out before the day.

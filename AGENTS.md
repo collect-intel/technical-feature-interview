@@ -8,8 +8,8 @@ and enums aren't allowed.
 
 ## Commands
 
-- `npm run dev`: the app at http://localhost:3000 (loads the practice scenario on first boot)
-- `npm run scenario -- <code>`: load a scenario and reset the database; restart `npm run dev` after
+- `npm run dev`: the app at http://localhost:3000 (uses the practice scenario until you load another)
+- `npm run scenario -- <file or URL>`: load the scenario your interviewer sends and reset the database; restart `npm run dev` after (`npm run scenario -- practice` goes back)
 - `npm test`, `npm run test:given`, `npm run test:known-answer`
 - One test file: `node --test tests/known-answer/panel.test.ts`
 - `npm run typecheck`, `npm run build`
@@ -33,7 +33,7 @@ and enums aren't allowed.
 - Record failures as failures (null, with a reason), never as zero.
 - Every analyses row records its method version, parameters, interpretations and input hash.
 - Don't edit `tests/known-answer/`; make the tests pass.
-- Don't commit `.scenario/`, `data/` or anything under `interviewer/`.
+- Don't commit `.scenario/` or `data/`.
 
 <!-- BEGIN:nextjs-agent-rules -->
 

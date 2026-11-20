@@ -1,6 +1,5 @@
 // Model Monoculture: known-answer test (briefs/model-monoculture.md).
-// Collective similarity is 100 × cosine between a response and the mean of the *other* responses
-// in its condition. Identical responses must score 100; random directions must score about 0.
+// Identical responses must score 100; responses in random directions must score about 0.
 
 import assert from "node:assert/strict";
 import { after, before, test } from "node:test";

@@ -6,7 +6,6 @@
     "node": ">=22.18"
   },
   "scripts": {
-    "postinstall": "node scripts/hooks.ts",
     "dev": "next dev",
     "doctor": "node --disable-warning=ExperimentalWarning scripts/doctor.ts",
     "scenario": "node scripts/scenario.ts",
@@ -15,13 +14,6 @@
     "test:given": "node --disable-warning=ExperimentalWarning --test --test-concurrency=1 \"tests/given/*.test.ts\"",
     "test:known-answer": "node --disable-warning=ExperimentalWarning --test --test-concurrency=1 \"tests/known-answer/*.test.ts\"",
     "typecheck": "tsc --noEmit",
-    "check:canary": "node scripts/check-canary.ts",
-    "keygen": "node scripts/keygen.ts",
-    "seal": "node scripts/seal.ts",
-    "unseal": "node scripts/unseal.ts",
-    "codes": "node scripts/codes.ts",
-    "build:scenarios": "node scripts/build-scenarios.ts",
-    "check:interviewer": "node scripts/check-interviewer.ts",
     "build": "next build",
     "start": "next start"
   },

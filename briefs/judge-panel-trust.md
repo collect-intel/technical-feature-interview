@@ -25,7 +25,7 @@ more) or read every response themselves.
 1. **`tests/known-answer/panel.test.ts` passes.** Start here.
 2. A **Panel** view for a run (`/runs/:id/panel`) shows, for each rubric check, the aggregated
    verdict, with a switch between majority vote, Inverse Surprising Popularity (ISP) and
-   Optimal Weight (OW, with accuracies estimated without labels).
+   Optimal Weight (OW, with accuracies estimated without labels: the paper covers this in §5.2).
 3. It shows each judge's estimated reliability and weight, and flags any judge it doesn't
    trust, saying why.
 4. It shows how many checks change verdict compared with majority vote.

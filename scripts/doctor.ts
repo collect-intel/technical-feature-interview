@@ -3,8 +3,7 @@ import { createServer } from "node:net";
 import { readFileSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
-import { decrypt } from "../lib/seal.ts";
-import { PRACTICE_CODE } from "../server/app.ts";
+import { practiceScenario } from "../lib/practice.ts";
 
 const results: [string, boolean, string][] = [];
 const check = async (name: string, fn: () => unknown | Promise<unknown>) => {
@@ -37,10 +36,7 @@ for (const port of [Number(process.env.PORT ?? 3000)]) {
     s.listen(port, () => s.close(() => res()));
   }));
 }
-await check("Practice scenario opens", () => {
-  const s = JSON.parse(decrypt(readFileSync("scenarios/practice.enc"), { code: PRACTICE_CODE }).toString());
-  return s.title;
-});
+await check("Practice scenario builds", () => practiceScenario().title);
 await check("Dependencies installed", () => {
   readFileSync("node_modules/next/package.json");
 });

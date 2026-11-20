@@ -8,7 +8,7 @@ import assert from "node:assert/strict";
 import { after, before, test } from "node:test";
 import { surveyKey } from "../../lib/scenario.ts";
 import { loadStudy } from "../../server/study.ts";
-import { syntheticStudy } from "../../scripts/lib/study.ts";
+import { syntheticStudy } from "../../lib/study.ts";
 import { runAnalysis, startMock, tempDb, testScenario } from "../helpers/env.ts";
 
 const study = syntheticStudy({ id: "study_known_answer", seed: 11, participants: 30, items: 20, retest: 0.8, conditions: { retest: 0, first: 0 } });

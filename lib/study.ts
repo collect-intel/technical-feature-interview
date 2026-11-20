@@ -1,9 +1,9 @@
 // Builds a synthetic survey study (no real people). Each person has an underlying answer per
 // item; their two waves and each agent condition reproduce it with the probabilities given.
 
-import { hashSeed } from "../../lib/prng/hashSeed.ts";
-import { mulberry32 } from "../../lib/prng/mulberry32.ts";
-import { surveyKey, type Study, type StudyItem } from "../../lib/scenario.ts";
+import { hashSeed } from "./prng/hashSeed.ts";
+import { mulberry32 } from "./prng/mulberry32.ts";
+import { surveyKey, type Study, type StudyItem } from "./scenario.ts";
 
 const ITEM_BANK: Omit<StudyItem, "id">[] = [
   { text: "How much confidence do you have in your local library service?", kind: "ordinal", options: ["A great deal", "Only some", "Hardly any"] },

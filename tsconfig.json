@@ -48,7 +48,6 @@
     ".next/dev/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules",
-    "interviewer"
+    "node_modules"
   ]
 }

@@ -26,13 +26,17 @@ hours of runs with no record of the settings used.
 1. **`tests/known-answer/lab.test.ts` passes.** Start here.
 2. A **Lab** page (`/lab`) lets a researcher configure a simulation (names, population size,
    memory length, committed-minority share, number of seeds) and launch it as a background job.
-3. Progress is shown while it runs, and a running simulation can be cancelled; cancelled or
-   partial results are labelled as such.
+3. Progress is shown while it runs; partial results are labelled as such.
 4. Results show the convergence curve and, across seeds, which convention won and how
    often, with uncertainty.
-5. A sweep over committed-minority sizes estimates the critical mass, with uncertainty.
-6. Agents' moves come from the gateway's `/v1/agent` endpoint. Every simulation stores its
+5. Agents' moves come from the gateway's `/v1/agent` endpoint. Every simulation stores its
    settings and seed so it can be reproduced.
+
+**Stretch goals** (only if you have time; we don't expect them in the session, but tell us how
+you'd build them):
+
+- Cancelling a running simulation, with cancelled results labelled.
+- A sweep over committed-minority sizes that estimates the critical mass, with uncertainty.
 
 ### `result_json` shape (required by the test)
 

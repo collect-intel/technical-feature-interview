@@ -1,8 +1,6 @@
 node_modules/
 data/
 .scenario/
-interviewer/
-.interviewer-key
 *.db
 *.db-*
 .next/

@@ -2,17 +2,14 @@
 // Kept on globalThis because Next.js can load this module more than once (instrumentation,
 // route handlers, hot reload); every caller gets the same instance.
 
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync } from "node:fs";
 import { createGateway } from "../mock/gateway.ts";
-import { loadScenario, SCENARIO_DIR, SCENARIO_FILE, type Scenario } from "../lib/scenario.ts";
-import { decrypt } from "../lib/seal.ts";
+import { practiceScenario } from "../lib/practice.ts";
+import { loadScenario, SCENARIO_FILE, type Scenario } from "../lib/scenario.ts";
 import { openDb, type DB } from "./db.ts";
 import { mockUrl } from "./gateway.ts";
 import { launchRun, startWorker, type Worker } from "./runner.ts";
 import { loadStudy } from "./study.ts";
-
-/** The practice scenario's public code (also in README.md). */
-export const PRACTICE_CODE = "practice-meadow-lantern";
 
 export type App = { db: DB; scenario: Scenario; gateway: ReturnType<typeof createGateway>; worker: Worker | null };
 
@@ -20,13 +17,8 @@ const g = globalThis as typeof globalThis & { __mini_studio?: App };
 
 export function getApp(): App {
   if (g.__mini_studio) return g.__mini_studio;
-  if (!existsSync(SCENARIO_FILE)) {
-    // First boot: open the practice scenario so `npm run dev` works with nothing else.
-    const scenario = decrypt(readFileSync("scenarios/practice.enc"), { code: PRACTICE_CODE });
-    mkdirSync(SCENARIO_DIR, { recursive: true });
-    writeFileSync(SCENARIO_FILE, scenario);
-  }
-  const scenario = loadScenario();
+  // The session's scenario if one was loaded (`npm run scenario`), otherwise the practice one.
+  const scenario = existsSync(SCENARIO_FILE) ? loadScenario() : practiceScenario();
   const db = openDb();
   loadStudy(db, scenario);
   g.__mini_studio = { db, scenario, gateway: createGateway(scenario), worker: null };

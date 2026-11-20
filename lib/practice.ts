@@ -1,13 +1,11 @@
-// The practice scenario: public, with no planted problems. Candidates open it with the code in
-// README.md to try the app before their session, and `doctor` uses it to check the setup.
-// All text is synthetic.
+// The practice scenario: public, with no planted problems. The app loads it on first boot, so
+// `npm run dev` works with nothing else, and the given tests build on it. All text is synthetic.
 
-import { hashSeed } from "../../lib/prng/hashSeed.ts";
-import { mulberry32 } from "../../lib/prng/mulberry32.ts";
-import { chatKey, judgeKey, SCENARIO_VERSION, type Scenario } from "../../lib/scenario.ts";
+import { hashSeed } from "./prng/hashSeed.ts";
+import { mulberry32 } from "./prng/mulberry32.ts";
+import { chatKey, judgeKey, SCENARIO_VERSION, type Scenario } from "./scenario.ts";
 import { syntheticStudy } from "./study.ts";
 
-export { PRACTICE_CODE } from "../../server/app.ts";
 
 export function practiceScenario(round = "practice", seed = 7): Scenario {
   const rand = mulberry32(hashSeed(`practice|${seed}`));
